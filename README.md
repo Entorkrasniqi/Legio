@@ -1,4 +1,4 @@
-# VireOps
+# Legio
 
 A local-first, **macOS-only** desktop app for running AI-agent "companies" —
 built to macOS's own UI conventions (see `docs/UI_DESIGN.md`), not a
