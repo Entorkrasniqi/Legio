@@ -15,7 +15,9 @@ Business-agnostic by design — there's nothing industry-specific baked in.
 
 - macOS (developed on an **Intel Mac**, macOS Tahoe 26; packaging also targets
   Apple silicon)
-- Node.js LTS (see `.nvmrc` once added) and npm
+- Node.js LTS (version in `.nvmrc`) and npm
+- `gitleaks` (`brew install gitleaks`) — the pre-commit hook refuses to
+  commit without it, rather than letting changes go unscanned for secrets
 - Xcode Command Line Tools (`xcode-select --install`) — needed to build native
   modules like `better-sqlite3` on x64
 - An Anthropic API key ([platform.claude.com](https://platform.claude.com))
@@ -36,9 +38,9 @@ Business-agnostic by design — there's nothing industry-specific baked in.
 ## Setup
 
 ```bash
-git clone <this repo>
-cd vireops
-npm install
+git clone https://github.com/Entorkrasniqi/Legio.git
+cd Legio
+npm install            # also rebuilds native modules for Electron (postinstall)
 cp .env.example .env   # if present — see docs/SECURITY.md for what goes where
 npm run dev
 ```
@@ -55,7 +57,7 @@ Electron's ABI, not your system Node's. If `npm run dev` fails with a module
 version mismatch:
 
 ```bash
-npm run rebuild   # wraps electron-rebuild — see package.json
+npm run rebuild   # electron-builder install-app-deps — see package.json
 ```
 
 If you see an arm64/x64 mismatch, check that Node itself is the x64 build
@@ -69,8 +71,10 @@ to an arm64 Node under Rosetta).
 | `npm run dev` | Start the app in development mode |
 | `npm run typecheck` | TypeScript, no emit |
 | `npm run lint` | Lint main + renderer |
-| `npm test` | Run the vitest suite (no real API calls — client is mocked) |
+| `npm test` | Run the vitest suite under Electron's Node (no real API calls — client is mocked) |
+| `npm run test:e2e` | Build, then run the Playwright-Electron smoke tests (API is stubbed locally) |
 | `npm run build` | Production build |
+| `npm run package:dir` | Unsigned, unpacked x64 build — quick packaging sanity check |
 | `npm run package` | Package with electron-builder (x64 and arm64) |
 
 ## Project docs
@@ -81,6 +85,8 @@ Start with `CLAUDE.md` for the project's ground rules, then:
 - `docs/DOMAIN_MODEL.md` — entities and schema
 - `docs/ORCHESTRATION.md` — group-chat engine, loop guard, approvals
 - `docs/SECURITY.md` — key storage, hardening, sandboxing
+- `docs/CONNECTORS.md` — connector catalog and default risk tiers
+- `docs/UI_DESIGN.md` — macOS-native UI and distribution
 - `docs/STRUCTURE.md` — folder layout
 - `docs/ROADMAP.md` — milestones
 - `docs/DEVOPS.md` — CI, pre-commit hooks, E2E smoke tests, release pipeline
@@ -91,4 +97,3 @@ Routines and schedules only run while the app is open (there's no background
 server). The app surfaces this in the UI and offers to run or skip missed
 routines on launch. Moving execution off-device would mean adding a cloud
 agent runtime behind the existing `AgentRuntime` interface — not a v1 goal.
-# Legio
