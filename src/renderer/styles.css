@@ -1,0 +1,89 @@
+/* Minimal base for M1. The full macOS-native treatment (vibrancy, accent
+   color, sidebar) is M10 — see docs/UI_DESIGN.md. System font and
+   light/dark following are cheap enough to do now. */
+:root {
+  color-scheme: light dark;
+  font-family: -apple-system, 'SF Pro Text', system-ui, sans-serif;
+  font-size: 13px;
+  --bg: #ffffff;
+  --fg: #1d1d1f;
+  --muted: #6e6e73;
+  --border: #d2d2d7;
+  --ok: #248a3d;
+  --bad: #d70015;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1e1e1e;
+    --fg: #f5f5f7;
+    --muted: #98989d;
+    --border: #3a3a3c;
+    --ok: #30d158;
+    --bad: #ff453a;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+main {
+  padding: 20px 24px;
+}
+
+h1 {
+  font-size: 22px;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+h2 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+input[type='password'] {
+  flex: 1;
+  font: inherit;
+  padding: 5px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+}
+
+button {
+  font: inherit;
+  padding: 4px 12px;
+  border-radius: 6px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.small {
+  font-size: 11px;
+}
+
+.feedback.success {
+  color: var(--ok);
+}
+
+.feedback.error {
+  color: var(--bad);
+}

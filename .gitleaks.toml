@@ -1,0 +1,10 @@
+# Default gitleaks rules (which include Anthropic API key patterns) plus an
+# allowlist for the obviously-fake keys used in tests.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Fake test keys"
+regexes = [
+  '''sk-ant-(test|e2e|secret-should-never-appear)[A-Za-z0-9-]*''',
+]

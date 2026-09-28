@@ -1,0 +1,29 @@
+node_modules/
+dist/
+out/
+release/
+coverage/
+playwright-report/
+test-results/
+# build/ is NOT ignored: it holds electron-builder resources (entitlements,
+# icons, DMG background) that packaging needs. Build output goes to release/.
+
+# local SQLite database — never commit user data
+*.sqlite
+*.sqlite3
+*.sqlite-wal
+*.sqlite-shm
+*.db
+
+# secrets / local env
+.env
+.env.local
+
+# OS / editor
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+
+# logs
+*.log
+npm-debug.log*

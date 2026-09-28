@@ -1,0 +1,25 @@
+# Packaging config. M1 only uses it for native-module rebuilds
+# (install-app-deps) and an unsigned x64 `--dir` sanity build; signing,
+# notarization and the styled DMG are M10 (docs/ROADMAP.md, docs/DEVOPS.md).
+appId: com.entorkrasniqi.legio
+productName: Legio
+directories:
+  buildResources: build
+  output: release
+files:
+  - out/**/*
+  - package.json
+  # better-sqlite3 ships prebuilt binaries for every OS; this app is Mac-only.
+  - '!node_modules/better-sqlite3/prebuilds/{win32,linux,linuxmusl}-*'
+  - '!node_modules/better-sqlite3/lib/{win32,linux,linuxmusl}-*'
+  - '!node_modules/better-sqlite3/{src,deps,build}/**'
+asarUnpack:
+  - '**/*.node'
+mac:
+  category: public.app-category.productivity
+  target:
+    - target: dmg
+      arch: [x64, arm64]
+  hardenedRuntime: true
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist

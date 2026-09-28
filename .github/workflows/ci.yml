@@ -1,0 +1,73 @@
+# The authoritative pass/fail check for every milestone (docs/DEVOPS.md).
+# Mac-only app, so Mac-only runners: Apple silicon (macos-latest) plus Intel,
+# because development happens on an Intel Mac and native-module rebuilds must
+# be proven on both architectures.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  check:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, macos-15-intel]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      # postinstall runs `electron-builder install-app-deps`, rebuilding
+      # better-sqlite3 against Electron's ABI for this runner's architecture.
+      - name: Install dependencies (and rebuild native modules)
+        run: npm ci
+
+      - name: Report architecture
+        run: node -p "process.platform + '/' + process.arch"
+
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm test
+
+      - name: E2E smoke tests (stubbed API — no real spend)
+        run: npm run test:e2e
+
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.os }}
+          path: playwright-report/
+          retention-days: 7
+
+      # Surfaced as a visible warning, not silently ignored; doesn't block
+      # merges on every transitive advisory (docs/DEVOPS.md).
+      - name: npm audit
+        if: matrix.os == 'macos-latest'
+        continue-on-error: true
+        run: npm audit --audit-level=high

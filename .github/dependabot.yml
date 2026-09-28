@@ -1,0 +1,20 @@
+# Electron bundles Chromium and Node, so a stale Electron means shipping known
+# Chromium CVEs (docs/DEVOPS.md → Keeping Electron itself current).
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      electron:
+        patterns: ['electron', 'electron-builder', 'electron-vite', '@electron/*']
+      dev-tooling:
+        dependency-type: development
+        exclude-patterns: ['electron', 'electron-builder', 'electron-vite', '@electron/*']
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly

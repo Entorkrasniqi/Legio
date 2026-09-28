@@ -1,0 +1,9 @@
+out/
+dist/
+release/
+coverage/
+playwright-report/
+test-results/
+package-lock.json
+# Hand-written prose: don't let the formatter reflow the project docs.
+*.md
